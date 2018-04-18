@@ -1,5 +1,7 @@
 package com.drpicox.fishingLagoon.actions;
 
+import java.util.Objects;
+
 public class FishAction extends Action {
 
     private long fishingCount;
@@ -12,6 +14,20 @@ public class FishAction extends Action {
 
     public long getFishingCount() {
         return fishingCount;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        FishAction that = (FishAction) o;
+        return fishingCount == that.fishingCount;
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(fishingCount);
     }
 
     @Override

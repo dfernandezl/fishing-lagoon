@@ -4,29 +4,77 @@ import com.drpicox.fishingLagoon.actions.Action;
 import com.drpicox.fishingLagoon.bots.BotId;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class LagoonHistory {
 
+    private int weekCount;
     private List<Lagoon> lagoonsByWeek;
     private Map<String, BotWeekAction> botWeekActions;
 
-    public LagoonHistory(Lagoon initialLagoon) {
-        this(new LinkedList<>(), new HashMap<>());
+    public LagoonHistory(int weekCount, Lagoon initialLagoon) {
+        this(weekCount, new LinkedList<>(), new HashMap<>());
 
         lagoonsByWeek.add(initialLagoon);
     }
 
-    private LagoonHistory(List<Lagoon> lagoonsByWeek, Map<String, BotWeekAction> botWeekActions) {
+    private LagoonHistory(int weekCount, List<Lagoon> lagoonsByWeek, Map<String, BotWeekAction> botWeekActions) {
+        this.weekCount = weekCount;
         this.lagoonsByWeek = lagoonsByWeek;
         this.botWeekActions = botWeekActions;
     }
 
+    public Action getActionOfAt(BotId botId, int weekIndex) {
+        return getLagoonAt(weekIndex).getActionOf(botId);
+    }
+
+    public List<Action> getActionsOf(BotId botId) {
+        List<Action> result = new ArrayList<>();
+        for (int weekIndex = 0; weekIndex < weekCount; weekIndex++) {
+            Action action = getActionOfAt(botId, weekIndex);
+            result.add(action);
+        }
+        return result;
+    }
+
+    public List<BotId> getBots() {
+        return new ArrayList(botWeekActions.values().stream().map(x -> x.botId).collect(Collectors.toSet()));
+    }
+
+    public Lagoon getInitialLagoon() {
+        return getLagoonAt(0);
+    }
+
     public Lagoon getLagoonAt(int weekIndex) {
+        weekIndex = Math.min(weekCount, weekIndex);
         cacheMissingLagoonsUntil(weekIndex);
         return lagoonsByWeek.get(weekIndex);
     }
 
+    public long getFishCountOf(BotId botId) {
+        return getFishCountOfAt(botId, weekCount);
+    }
+
+    public long getFishCountOfAt(BotId botId, int weekIndex) {
+        return getLagoonAt(weekIndex).getFishCountOf(botId);
+    }
+
+    public List<Long> getFishCountsOf(BotId botId) {
+        List<Long> result = new ArrayList<>();
+        for (int weekIndex = 0; weekIndex <= weekCount; weekIndex++) {
+            long fishCount = getFishCountOfAt(botId, weekIndex);
+            result.add(fishCount);
+        }
+        return result;
+    }
+
+    public int getWeekCount() {
+        return weekCount;
+    }
+
     public LagoonHistory putAction(BotId botId, int weekIndex, Action action) {
+        if (weekIndex >= weekCount) return this;
+
         BotWeekAction bwa = new BotWeekAction(botId, weekIndex, action);
 
         LagoonHistory result = copy();
@@ -36,10 +84,10 @@ public class LagoonHistory {
         return result;
     }
 
-    public LagoonHistory putBotActions(BotId botId, Action... actions) {
+    public LagoonHistory putActions(BotId botId, Action... actions) {
         LagoonHistory result = copy();
         result.botWeekActions = new HashMap<>(botWeekActions);
-        for (int weekIndex = 0; weekIndex < actions.length; weekIndex++) {
+        for (int weekIndex = 0; weekIndex < actions.length && weekIndex < weekCount; weekIndex++) {
             BotWeekAction bwa = new BotWeekAction(botId, weekIndex, actions[weekIndex]);
             result.botWeekActions.put(bwa.key, bwa);
         }
@@ -49,6 +97,7 @@ public class LagoonHistory {
     }
 
     private void cacheMissingLagoonsUntil(int targetWeekIndex) {
+        targetWeekIndex = Math.min(targetWeekIndex, weekCount);
         int weekIndex = lagoonsByWeek.size();
         while (weekIndex - 1 <= targetWeekIndex) {
 
@@ -82,11 +131,12 @@ public class LagoonHistory {
     }
 
     private LagoonHistory copy() {
-        return new LagoonHistory(lagoonsByWeek, botWeekActions);
+        return new LagoonHistory(weekCount, lagoonsByWeek, botWeekActions);
     }
 
     @Override
     public String toString() {
+        cacheMissingLagoonsUntil(weekCount);
         return "LagoonHistory{\n  "
                 + String.join("\n  ", lagoonsByWeek.stream().map(x -> x.toString()).toArray(String[]::new))
                 + "\n}";

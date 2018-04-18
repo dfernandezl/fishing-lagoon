@@ -42,11 +42,18 @@ public class Lagoon {
             .cleanActions();
     }
 
+    public Action getActionOf(BotId botId) {
+        if (botsAction.containsKey(botId)) {
+            return botsAction.get(botId).action;
+        }
+        return null;
+    }
+
     public long getLagoonFishCount() {
         return lagoonFishCount;
     }
 
-    public long getBotFishCount(BotId botId) {
+    public long getFishCountOf(BotId botId) {
         return botsFishCount.getOrDefault(botId, 0L);
     }
 
@@ -80,7 +87,7 @@ public class Lagoon {
 
         long share = Math.min(lagoonFishCount / fishingBots.size(), minActionFishCount);
         for (BotId fishingBot : fishingBots) {
-            result.botsFishCount.put(fishingBot, getBotFishCount(fishingBot) + share);
+            result.botsFishCount.put(fishingBot, getFishCountOf(fishingBot) + share);
         }
         result.lagoonFishCount -= share * fishingBots.size();
 
@@ -112,7 +119,7 @@ public class Lagoon {
         return "Lagoon{"
                 + "fish [" + lagoonFishCount + "], "
                 + String.join(", ", bots.stream().map(
-                        b -> b + "[" + getBotFishCount(b) + "]:" + botsAction.get(b)
+                        b -> b + "[" + getFishCountOf(b) + "]:" + botsAction.get(b)
                 ).toArray(String[]::new))
                 + "}";
     }

@@ -49,14 +49,14 @@ public class LagoonTest {
         Lagoon lagoon2 = lagoon1.commitWeek();
 
         assertThat(lagoon0.getLagoonFishCount(), is(9L));
-        assertThat(lagoon0.getBotFishCount(botId1), is(0L));
-        assertThat(lagoon0.getBotFishCount(botId2), is(0L));
+        assertThat(lagoon0.getFishCountOf(botId1), is(0L));
+        assertThat(lagoon0.getFishCountOf(botId2), is(0L));
         assertThat(lagoon1.getLagoonFishCount(), is(9L));
-        assertThat(lagoon1.getBotFishCount(botId1), is(0L));
-        assertThat(lagoon1.getBotFishCount(botId2), is(0L));
+        assertThat(lagoon1.getFishCountOf(botId1), is(0L));
+        assertThat(lagoon1.getFishCountOf(botId2), is(0L));
         assertThat(lagoon2.getLagoonFishCount(), is(3L));
-        assertThat(lagoon2.getBotFishCount(botId1), is(7L));
-        assertThat(lagoon2.getBotFishCount(botId2), is(0L));
+        assertThat(lagoon2.getFishCountOf(botId1), is(7L));
+        assertThat(lagoon2.getFishCountOf(botId2), is(0L));
         assertThat(lagoon0, is(not(lagoon1)));
         assertThat(lagoon0, is(not(lagoon2)));
         assertThat(lagoon1, is(not(lagoon2)));
@@ -71,9 +71,9 @@ public class LagoonTest {
                 .commitWeek();
 
         assertThat(lagoon.getLagoonFishCount(), is(0L));
-        assertThat(lagoon.getBotFishCount(botId1), is(0L));
-        assertThat(lagoon.getBotFishCount(botId2), is(5L));
-        assertThat(lagoon.getBotFishCount(botId3), is(4L));
+        assertThat(lagoon.getFishCountOf(botId1), is(0L));
+        assertThat(lagoon.getFishCountOf(botId2), is(5L));
+        assertThat(lagoon.getFishCountOf(botId3), is(4L));
     }
 
     @Test
@@ -84,8 +84,8 @@ public class LagoonTest {
                 .commitWeek();
 
         assertThat(lagoon.getLagoonFishCount(), is(1L));
-        assertThat(lagoon.getBotFishCount(botId1), is(4L));
-        assertThat(lagoon.getBotFishCount(botId2), is(4L));
+        assertThat(lagoon.getFishCountOf(botId1), is(4L));
+        assertThat(lagoon.getFishCountOf(botId2), is(4L));
     }
 
     @Test
@@ -95,6 +95,6 @@ public class LagoonTest {
                 .commitWeek();
 
         assertThat(lagoon.getLagoonFishCount(), is(13L));
-        assertThat(lagoon.getBotFishCount(botId1), is(0L));
+        assertThat(lagoon.getFishCountOf(botId1), is(0L));
     }
 }
