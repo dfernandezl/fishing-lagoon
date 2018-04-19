@@ -42,8 +42,25 @@ public class LagoonTest {
     }
 
     @Test
+    public void lagoon_seat_adds_a_bot() {
+        Lagoon lagoon = new Lagoon(9L)
+                .addBot(botId1)
+                .addBot(botId2);
+
+        assertThat(lagoon.getBots(), containsInAnyOrder(botId1, botId2));
+    }
+
+    @Test
+    public void lagoon_seat_adds_many_bots() {
+        Lagoon lagoon = new Lagoon(9L)
+                .addBots(botId1, botId2);
+
+        assertThat(lagoon.getBots(), containsInAnyOrder(botId1, botId2));
+    }
+
+    @Test
     public void lagoon_fishing() {
-        Lagoon lagoon0 = new Lagoon(9L);
+        Lagoon lagoon0 = new Lagoon(9L).addBots(botId1, botId2);
 
         Lagoon lagoon1 = lagoon0.putAction(botId1, fish(7L));
         Lagoon lagoon2 = lagoon1.commitWeek();
@@ -63,8 +80,18 @@ public class LagoonTest {
     }
 
     @Test
+    public void lagoon_fishing_ignores_not_added_bots() {
+        Lagoon lagoon = new Lagoon(9L)
+                .putAction(botId1, fish(9L))
+                .commitWeek();
+
+        assertThat(lagoon.getLagoonFishCount(), is(13L));
+    }
+
+    @Test
     public void lagoon_fishing_who_ask_for_less_fishes_first() {
         Lagoon lagoon = new Lagoon(9L)
+                .addBots(botId1, botId2, botId3)
                 .putAction(botId1, fish(9L))
                 .putAction(botId2, fish(7L))
                 .putAction(botId3, fish(4L))
@@ -79,6 +106,7 @@ public class LagoonTest {
     @Test
     public void lagoon_fishing_share_available_fish_between_same_amount_fishing_count() {
         Lagoon lagoon = new Lagoon(9L)
+                .addBots(botId1, botId2)
                 .putAction(botId1, fish(9L))
                 .putAction(botId2, fish(9L))
                 .commitWeek();
@@ -89,8 +117,9 @@ public class LagoonTest {
     }
 
     @Test
-    public void lagoon_rest() {
+    public void lagoon_action_rest() {
         Lagoon lagoon = new Lagoon(9L)
+                .addBots(botId1)
                 .putAction(botId1, rest())
                 .commitWeek();
 

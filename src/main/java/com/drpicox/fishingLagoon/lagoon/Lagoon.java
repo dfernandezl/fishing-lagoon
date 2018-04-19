@@ -6,26 +6,49 @@ import com.drpicox.fishingLagoon.bots.BotId;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Lagoon {
     private long lagoonFishCount;
+    private Set<BotId> bots;
     private Map<BotId, Long> botsFishCount;
     private Map<BotId, BotAction> botsAction;
 
     public Lagoon(long lagoonFishCount) {
-        this(lagoonFishCount, new HashMap<>(), new HashMap<>());
+        this(lagoonFishCount, new HashSet<>(), new HashMap<>(), new HashMap<>());
     }
 
-    private Lagoon(long lagoonFishCount, Map<BotId, Long> botsFishCount, Map<BotId, BotAction> botsAction) {
+    private Lagoon(long lagoonFishCount, Set<BotId> bots, Map<BotId, Long> botsFishCount, Map<BotId, BotAction> botsAction) {
+        this.bots = bots;
         this.lagoonFishCount = lagoonFishCount;
         this.botsFishCount = botsFishCount;
         this.botsAction = botsAction;
     }
 
     public Lagoon putAction(BotId botId, Action action) {
+        if (!bots.contains(botId)) return this;
+
         Lagoon result = copy();
         result.botsAction = new HashMap<>(botsAction);
         result.botsAction.put(botId, new BotAction(botId, action));
+        return result;
+    }
+
+    public Lagoon addBot(BotId botId) {
+        if (bots.contains(botId)) return this;
+
+        Lagoon result = copy();
+        result.bots = new HashSet<>(bots);
+        result.bots.add(botId);
+        return result;
+    }
+
+    public Lagoon addBots(BotId... newBots) {
+        if (Stream.of(newBots).allMatch(bot -> this.bots.contains(bot))) return this;
+
+        Lagoon result = copy();
+        result.bots = new HashSet<>(bots);
+        result.bots.addAll(Arrays.asList(newBots));
         return result;
     }
 
@@ -47,6 +70,10 @@ public class Lagoon {
             return botsAction.get(botId).action;
         }
         return null;
+    }
+
+    public List<BotId> getBots() {
+        return new LinkedList<>(bots);
     }
 
     public long getLagoonFishCount() {
@@ -102,7 +129,7 @@ public class Lagoon {
     }
 
     private Lagoon copy() {
-        return new Lagoon(lagoonFishCount, botsFishCount, botsAction);
+        return new Lagoon(lagoonFishCount, bots, botsFishCount, botsAction);
     }
 
     private Map<BotId,Long> copyBotsFishCount() {

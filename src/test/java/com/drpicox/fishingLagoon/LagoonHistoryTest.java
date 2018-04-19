@@ -18,7 +18,7 @@ public class LagoonHistoryTest {
     private static final BotId botId1 = new BotId("bot1");
     private static final BotId botId2 = new BotId("bot2");
     private static final BotId botId3 = new BotId("bot3");
-    private static final Lagoon initialLagoon = new Lagoon(9L);
+    private static final Lagoon initialLagoon = new Lagoon(9L).addBots(botId1, botId2);
 
     @Test
     public void lagoon_history_creation() {
