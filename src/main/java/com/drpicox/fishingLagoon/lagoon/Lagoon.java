@@ -119,7 +119,7 @@ public class Lagoon {
         return "Lagoon{"
                 + "fish [" + lagoonFishCount + "], "
                 + String.join(", ", bots.stream().map(
-                        b -> b + "[" + getFishCountOf(b) + "]:" + botsAction.get(b)
+                        b -> b + "[" + getFishCountOf(b) + "]:" + getActionOf(b)
                 ).toArray(String[]::new))
                 + "}";
     }

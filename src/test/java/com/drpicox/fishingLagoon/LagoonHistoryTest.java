@@ -158,4 +158,14 @@ public class LagoonHistoryTest {
         assertThat(fishCounts, contains(0L, 1L, 3L, 4L));
         assertThat(fishCount, is(4L));
     }
+
+    @Test
+    public void lagoon_regresion_add_actions_does_not_remove_others_actions() {
+        LagoonHistory history = new LagoonHistory(3, initialLagoon)
+                .putAction(botId1, 2, fish(2))
+                .putActions(botId2,rest());
+
+        Lagoon finalLagoon = history.getLagoonAt(3);
+        assertThat(finalLagoon.getLagoonFishCount(), is(not(28L)));
+    }
 }

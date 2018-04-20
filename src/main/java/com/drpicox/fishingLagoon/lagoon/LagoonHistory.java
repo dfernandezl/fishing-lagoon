@@ -91,7 +91,7 @@ public class LagoonHistory {
             BotWeekAction bwa = new BotWeekAction(botId, weekIndex, actions[weekIndex]);
             result.botWeekActions.put(bwa.key, bwa);
         }
-        result.botWeekActions.values().removeIf(bwa -> bwa.weekIndex >= actions.length);
+        result.botWeekActions.values().removeIf(bwa -> bwa.weekIndex >= actions.length && bwa.botId.equals(botId));
         result.lagoonsByWeek = copyLagoonsByWeekUntil(0);
         return result;
     }
