@@ -84,6 +84,28 @@ public class Lagoon {
         return botsFishCount.getOrDefault(botId, 0L);
     }
 
+    public long getScoreOf(BotId botId) {
+        return getFishCountOf(botId);
+    }
+
+    public boolean hasBot(BotId botId) {
+        return bots.contains(botId);
+    }
+
+    public Lagoon removeBot(BotId botId) {
+        if (!bots.contains(botId)) return this;
+
+        Lagoon result = copy();
+        result.bots = new HashSet<>(bots);
+        result.bots.remove(botId);
+        result.botsAction = new HashMap<>(botsAction);
+        result.botsAction.keySet().remove(botId);
+        result.botsFishCount = new HashMap<>(botsFishCount);
+        result.botsFishCount.keySet().remove(botId);
+        return result;
+    }
+
+
     private Lagoon commitFishing() {
         List<BotAction> fishingBotActions = botsAction.values().stream()
                 .filter(ba -> ba.isFishing())

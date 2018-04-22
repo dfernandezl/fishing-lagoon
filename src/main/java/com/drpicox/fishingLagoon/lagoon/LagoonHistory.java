@@ -51,6 +51,10 @@ public class LagoonHistory {
         return lagoonsByWeek.get(weekIndex);
     }
 
+    public Lagoon getFinalLagoon() {
+        return getLagoonAt(weekCount);
+    }
+
     public long getFishCountOf(BotId botId) {
         return getFishCountOfAt(botId, weekCount);
     }
@@ -68,12 +72,17 @@ public class LagoonHistory {
         return result;
     }
 
+    public long getScoreOf(BotId botId) {
+        return getFishCountOf(botId);
+    }
+
     public int getWeekCount() {
         return weekCount;
     }
 
     public LagoonHistory putAction(BotId botId, int weekIndex, Action action) {
         if (weekIndex >= weekCount) return this;
+        if (!getInitialLagoon().hasBot(botId)) return this;
 
         BotWeekAction bwa = new BotWeekAction(botId, weekIndex, action);
 
@@ -85,6 +94,8 @@ public class LagoonHistory {
     }
 
     public LagoonHistory putActions(BotId botId, Action... actions) {
+        if (!getInitialLagoon().hasBot(botId)) return this;
+
         LagoonHistory result = copy();
         result.botWeekActions = new HashMap<>(botWeekActions);
         for (int weekIndex = 0; weekIndex < actions.length && weekIndex < weekCount; weekIndex++) {
