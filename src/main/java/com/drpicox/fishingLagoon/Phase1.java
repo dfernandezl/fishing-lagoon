@@ -26,7 +26,11 @@ public class Phase1 {
         tournament.round(10, 19L);
         tournament.round(10, 19L, "rest", "power");
         tournament.round(10, 39L);
-        tournament.round(new LagoonRound(10).addLagoons(new Lagoon(19L), new Lagoon(39L)));
+        tournament.round(
+                new LagoonRound(10)
+                        .addLagoons(new Lagoon(19L))
+                        .addLagoons(new Lagoon(39L))
+        );
 
         printResults(tournament);
     }
