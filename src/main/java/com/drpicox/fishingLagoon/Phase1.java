@@ -4,10 +4,7 @@ import com.drpicox.fishingLagoon.bots.BotId;
 import com.drpicox.fishingLagoon.lagoon.Lagoon;
 import com.drpicox.fishingLagoon.lagoon.LagoonRound;
 import com.drpicox.fishingLagoon.strategy.*;
-import com.drpicox.fishingLagoon.strategy.drpicox.OneStrategy;
-import com.drpicox.fishingLagoon.strategy.drpicox.PercentStrategy;
-import com.drpicox.fishingLagoon.strategy.drpicox.PowerStrategy;
-import com.drpicox.fishingLagoon.strategy.drpicox.RestStrategy;
+import com.drpicox.fishingLagoon.strategy.drpicox.*;
 
 import java.util.List;
 
@@ -17,6 +14,12 @@ public class Phase1 {
         tournament1();
         System.out.println("-----");
         tournament2();
+        System.out.println("-----");
+        tournament3();
+        System.out.println("-----");
+        tournament4();
+        System.out.println("-----");
+        tournament4();
     }
 
     private static void tournament1() {
@@ -30,10 +33,9 @@ public class Phase1 {
         tournament.round(10, 19L);
         tournament.round(10, 19L, "rest", "power");
         tournament.round(10, 39L);
-        tournament.round(
-                new LagoonRound(10)
-                        .addLagoons(new Lagoon(19L))
-                        .addLagoons(new Lagoon(39L))
+        tournament.round(new LagoonRound(10)
+            .addLagoons(new Lagoon(19L))
+            .addLagoons(new Lagoon(39L))
         );
 
         printResults(tournament);
@@ -46,8 +48,41 @@ public class Phase1 {
 
         tournament.round(10, 19L);
         tournament.round(10, 39L);
+        tournament.round(new LagoonRound(10)
+                .addLagoons(new Lagoon(19L))
+                .addLagoons(new Lagoon(19L))
+        );
+
+        printResults(tournament);
+    }
+
+    private static void tournament3() {
+        StrategyTournament tournament = new StrategyTournament()
+                .addStrategy("tit", new TitForTatStrategy())
+                .addStrategy("tat", new TitForTatStrategy())
+                .addStrategy("pct10", new PercentStrategy(0.10));
+
+        tournament.round(10, 19L);
+        tournament.round(10, 39L);
+        tournament.round(new LagoonRound(10)
+                .addLagoons(new Lagoon(19L))
+                .addLagoons(new Lagoon(19L))
+        );
+
+        printResults(tournament);
+    }
+
+    private static void tournament4() {
+        StrategyTournament tournament = new StrategyTournament()
+                .addStrategy("tit", new TitForTatStrategy())
+                .addStrategy("tat", new TitForTatStrategy())
+                .addStrategy("pct40", new PercentStrategy(0.40));
+
+        tournament.round(10, 19L);
+        tournament.round(10, 39L);
         tournament.round(new LagoonRound(10).addLagoons(new Lagoon(19L), new Lagoon(39L)));
 
+        //printTournamentDetails(tournament);
         printResults(tournament);
     }
 
