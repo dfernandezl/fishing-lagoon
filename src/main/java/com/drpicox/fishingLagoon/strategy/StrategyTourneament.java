@@ -23,7 +23,6 @@ public class StrategyTourneament {
 
         BotId botId = new BotId(name);
         strategies.put(botId, strategy);
-        strategy.ownBotId(botId);
 
         return this;
     }
@@ -43,7 +42,7 @@ public class StrategyTourneament {
         for (int i = 0; i < 10; i++) {
             for (BotId botId : botIds) {
                 Strategy strategy = strategies.get(botId);
-                int lagoonIndex = strategy.seat(seatRound);
+                int lagoonIndex = strategy.seat(botId, seatRound);
                 seatRound = seatRound.seatBotAt(botId, lagoonIndex);
             }
         }
@@ -51,13 +50,14 @@ public class StrategyTourneament {
         LagoonRound actionRound = seatRound;
         for (BotId botId: round.getCompetitors()) {
             Strategy strategy = strategies.get(botId);
-            Action[] actions = strategy.getOrders(seatRound);
+            Action[] actions = strategy.getOrders(botId, seatRound);
             actionRound = actionRound.putBotActions(botId, actions);
         }
 
         LagoonRound finishedRound = actionRound;
-        for (Strategy strategy: strategies.values()) {
-            strategy.learnFromRound(finishedRound);
+        for (BotId botId : strategies.keySet()) {
+            Strategy strategy = strategies.get(botId);
+            strategy.learnFromRound(botId, finishedRound);
         }
 
         rounds.add(finishedRound);
@@ -70,32 +70,6 @@ public class StrategyTourneament {
                 .addLagoons(new Lagoon(initialFishCount));
 
         round(round, playingNames);
-
-        /*
-        Set<BotId> botIds = Stream.of(playingNames).map(x -> new BotId(x)).collect(Collectors.toSet());
-        botIds.retainAll(strategies.keySet());
-        if (botIds.isEmpty()) {
-            botIds = strategies.keySet();
-        }
-
-        Lagoon initialLagoon = new Lagoon(initialFishCount).addBots(botIds.stream().toArray(BotId[]::new));
-        LagoonHistory history = new LagoonHistory(weekCount, initialLagoon);
-
-        for (BotId botId : botIds) {
-            Strategy strategy = strategies.get(botId);
-            BotId[] competitors = botIds.stream().filter(b -> b != botId).toArray(BotId[]::new);
-
-            Action[] actions = strategy.getOrders(weekCount, initialLagoon, competitors);
-
-            history = history.putActions(botId, actions);
-        }
-
-        for (Strategy strategy: strategies.values()) {
-            strategy.learnFromHistory(history);
-        }
-
-        histories.add(history);
-        */
     }
 
     public List<BotId> getBots() {

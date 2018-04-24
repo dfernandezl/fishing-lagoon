@@ -2,16 +2,34 @@ package com.drpicox.fishingLagoon.strategy;
 
 import com.drpicox.fishingLagoon.actions.Action;
 import com.drpicox.fishingLagoon.bots.BotId;
-import com.drpicox.fishingLagoon.lagoon.Lagoon;
+import com.drpicox.fishingLagoon.lagoon.LagoonRound;
 
-import java.util.stream.IntStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 import static com.drpicox.fishingLagoon.actions.Actions.fish;
 
 public class OneStrategy extends Strategy {
 
     @Override
-    public Action[] getOrders(int weekCount, Lagoon lagoon, BotId... comptetitors) {
-        return IntStream.range(0, weekCount - 1).mapToObj(x -> fish(1)).toArray(Action[]::new);
+    public int seat(BotId botId, LagoonRound round) {
+        return new Random().nextInt(round.getLagoonCount());
     }
+
+    @Override
+    public Action[] getOrders(BotId botId, LagoonRound round) {
+        List<Action> actions = new ArrayList<>();
+
+        for (int weekIndex = 0; weekIndex < round.getWeekCount(); weekIndex++) {
+            actions.add(fish(1));
+        }
+
+        return actions.toArray(new Action[actions.size()]);
+    }
+
+    @Override
+    public void learnFromRound(BotId botId, LagoonRound lagoonRound) {
+    }
+
 }

@@ -112,7 +112,9 @@ public class LagoonRound {
     }
 
     public long getScoreOf(BotId botId) {
-        return getLagoonHistoryOf(botId).getFishCountOf(botId);
+        LagoonHistory history = getLagoonHistoryOf(botId);
+        if (history == null) return 0;
+        return history.getFishCountOf(botId);
     }
 
     public int getWeekCount() {

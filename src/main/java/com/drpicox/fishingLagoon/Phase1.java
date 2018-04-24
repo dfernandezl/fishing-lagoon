@@ -30,6 +30,19 @@ public class Phase1 {
     private static void printResults(StrategyTourneament tourneament) {
         List<BotId> bots = tourneament.getBots();
 
+        for (BotId botId: bots) {
+            System.out.print(botId.toString());
+            for (LagoonRound round : tourneament.getRounds()) {
+                long count = round.getScoreOf(botId);
+                System.out.print(";"+count);
+            }
+            System.out.println();
+        }
+    }
+
+    private static void printTournamentDetails(StrategyTourneament tourneament) {
+        List<BotId> bots = tourneament.getBots();
+
         System.out.print("Round");
         iterate(tourneament, (roundIndex, weekIndex) -> {
             System.out.print(";"+roundIndex);
@@ -79,25 +92,10 @@ public class Phase1 {
             });
             System.out.println();
         });
-
-
-        System.out.println();
-        System.out.println();
-        System.out.println();
-
-        bots.forEach(botId -> {
-            System.out.print(botId.toString());
-            tourneament.getHistories().forEach(history -> {
-                long count = history.getScoreOf(botId);
-                System.out.print(";"+count);
-            });
-            System.out.println();
-        });
     }
 
     private static void iterate(StrategyTourneament tourneament, ResultConsumer consumer) {
         for (int roundIndex = 0; roundIndex < tourneament.getRoundCound(); roundIndex++) {
-            int lagoonCount = tourneament.getLagoonCountAt(roundIndex);
             int weekCount = tourneament.getWeekCountAt(roundIndex, 0);
             for (int weekIndex = 0; weekIndex <= weekCount; weekIndex++) {
                 consumer.accept(roundIndex, weekIndex);

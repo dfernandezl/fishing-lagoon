@@ -2,14 +2,25 @@ package com.drpicox.fishingLagoon.strategy;
 
 import com.drpicox.fishingLagoon.actions.Action;
 import com.drpicox.fishingLagoon.bots.BotId;
-import com.drpicox.fishingLagoon.lagoon.Lagoon;
+import com.drpicox.fishingLagoon.lagoon.LagoonRound;
+
+import java.util.Random;
 
 import static com.drpicox.fishingLagoon.actions.Actions.rest;
 
 public class RestStrategy extends Strategy {
 
     @Override
-    public Action[] getOrders(int weekCount, Lagoon lagoon, BotId... comptetitors) {
-        return new Action[]{rest()};
+    public int seat(BotId botId, LagoonRound round) {
+        return new Random().nextInt(round.getLagoonCount());
+    }
+
+    @Override
+    public Action[] getOrders(BotId botId, LagoonRound round) {
+        return new Action[]{ rest() };
+    }
+
+    @Override
+    public void learnFromRound(BotId botId, LagoonRound lagoonRound) {
     }
 }
