@@ -4,10 +4,7 @@ import com.drpicox.fishingLagoon.bots.BotId;
 import com.drpicox.fishingLagoon.lagoon.Lagoon;
 import com.drpicox.fishingLagoon.lagoon.LagoonHistory;
 import com.drpicox.fishingLagoon.lagoon.LagoonRound;
-import com.drpicox.fishingLagoon.strategy.OneStrategy;
-import com.drpicox.fishingLagoon.strategy.PowerStrategy;
-import com.drpicox.fishingLagoon.strategy.RestStrategy;
-import com.drpicox.fishingLagoon.strategy.StrategyTourneament;
+import com.drpicox.fishingLagoon.strategy.*;
 
 import java.util.List;
 
@@ -17,7 +14,9 @@ public class Phase1 {
         StrategyTourneament tourneament = new StrategyTourneament()
                 .addStrategy("rest", new RestStrategy())
                 .addStrategy("one", new OneStrategy())
-                .addStrategy("power", new PowerStrategy());
+                .addStrategy("power", new PowerStrategy())
+                .addStrategy("pct10", new PercentStrategy(0.10))
+                .addStrategy("pct40", new PercentStrategy(0.40));
 
         tourneament.round(10, 19L);
         tourneament.round(10, 19L, "rest", "power");
@@ -26,6 +25,8 @@ public class Phase1 {
 
         printResults(tourneament);
     }
+
+
 
     private static void printResults(StrategyTourneament tourneament) {
         List<BotId> bots = tourneament.getBots();
