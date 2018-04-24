@@ -2,7 +2,6 @@ package com.drpicox.fishingLagoon;
 
 import com.drpicox.fishingLagoon.bots.BotId;
 import com.drpicox.fishingLagoon.lagoon.Lagoon;
-import com.drpicox.fishingLagoon.lagoon.LagoonHistory;
 import com.drpicox.fishingLagoon.lagoon.LagoonRound;
 import com.drpicox.fishingLagoon.strategy.*;
 
@@ -17,40 +16,40 @@ public class Phase1 {
     }
 
     private static void tournament1() {
-        StrategyTourneament tourneament = new StrategyTourneament()
+        StrategyTournament tournament = new StrategyTournament()
                 .addStrategy("rest", new RestStrategy())
                 .addStrategy("one", new OneStrategy())
                 .addStrategy("power", new PowerStrategy())
                 .addStrategy("pct10", new PercentStrategy(0.10))
                 .addStrategy("pct40", new PercentStrategy(0.40));
 
-        tourneament.round(10, 19L);
-        tourneament.round(10, 19L, "rest", "power");
-        tourneament.round(10, 39L);
-        tourneament.round(new LagoonRound(10).addLagoons(new Lagoon(19L), new Lagoon(39L)));
+        tournament.round(10, 19L);
+        tournament.round(10, 19L, "rest", "power");
+        tournament.round(10, 39L);
+        tournament.round(new LagoonRound(10).addLagoons(new Lagoon(19L), new Lagoon(39L)));
 
-        printResults(tourneament);
+        printResults(tournament);
     }
 
     private static void tournament2() {
-        StrategyTourneament tourneament = new StrategyTourneament()
+        StrategyTournament tournament = new StrategyTournament()
                 .addStrategy("one", new OneStrategy())
                 .addStrategy("pct30", new PercentStrategy(0.30));
 
-        tourneament.round(10, 19L);
-        tourneament.round(10, 39L);
-        tourneament.round(new LagoonRound(10).addLagoons(new Lagoon(19L), new Lagoon(39L)));
+        tournament.round(10, 19L);
+        tournament.round(10, 39L);
+        tournament.round(new LagoonRound(10).addLagoons(new Lagoon(19L), new Lagoon(39L)));
 
-        printResults(tourneament);
+        printResults(tournament);
     }
 
 
-    private static void printResults(StrategyTourneament tourneament) {
-        List<BotId> bots = tourneament.getBots();
+    private static void printResults(StrategyTournament tournament) {
+        List<BotId> bots = tournament.getBots();
 
         for (BotId botId: bots) {
             System.out.print(botId.toString());
-            for (LagoonRound round : tourneament.getRounds()) {
+            for (LagoonRound round : tournament.getRounds()) {
                 long count = round.getScoreOf(botId);
                 System.out.print(";"+count);
             }
@@ -58,31 +57,31 @@ public class Phase1 {
         }
     }
 
-    private static void printTournamentDetails(StrategyTourneament tourneament) {
-        List<BotId> bots = tourneament.getBots();
+    private static void printTournamentDetails(StrategyTournament tournament) {
+        List<BotId> bots = tournament.getBots();
 
         System.out.print("Round");
-        iterate(tourneament, (roundIndex, weekIndex) -> {
+        iterate(tournament, (roundIndex, weekIndex) -> {
             System.out.print(";"+roundIndex);
         });
         System.out.println();
 
         System.out.print("Lagoons");
-        iterate(tourneament, (roundIndex, weekIndex) -> {
-            System.out.print(";"+tourneament.getRound(roundIndex).getLagoonHistories().size());
+        iterate(tournament, (roundIndex, weekIndex) -> {
+            System.out.print(";"+tournament.getRound(roundIndex).getLagoonHistories().size());
         });
         System.out.println();
 
         System.out.print("Week");
-        iterate(tourneament, (roundIndex, weekIndex) -> {
+        iterate(tournament, (roundIndex, weekIndex) -> {
             System.out.print(";"+weekIndex);
         });
         System.out.println();
 
         System.out.print("Fishes");
-        iterate(tourneament, (roundIndex, weekIndex) -> {
+        iterate(tournament, (roundIndex, weekIndex) -> {
             System.out.print(";");
-            String[] fishCounts = tourneament.getRound(roundIndex).getLagoonHistories().stream()
+            String[] fishCounts = tournament.getRound(roundIndex).getLagoonHistories().stream()
                     .map(lagoonHistory -> "" + lagoonHistory.getLagoonAt(weekIndex).getLagoonFishCount())
                     .toArray(String[]::new);
             System.out.print(String.join(",", fishCounts));
@@ -91,18 +90,18 @@ public class Phase1 {
 
         bots.forEach(botId -> {
             System.out.print(botId + " lagoon");
-            iterate(tourneament, (roundIndex, weekIndex) -> {
-                Lagoon lagoon = tourneament.getLagoon(roundIndex, botId, weekIndex);
+            iterate(tournament, (roundIndex, weekIndex) -> {
+                Lagoon lagoon = tournament.getLagoon(roundIndex, botId, weekIndex);
                 System.out.print(";");
                 if (lagoon != null) {
-                    System.out.print(tourneament.getRound(roundIndex).getLagoonIndexOf(botId));
+                    System.out.print(tournament.getRound(roundIndex).getLagoonIndexOf(botId));
                 }
             });
             System.out.println();
 
             System.out.print(botId + " score");
-            iterate(tourneament, (roundIndex, weekIndex) -> {
-                Lagoon lagoon = tourneament.getLagoon(roundIndex, botId, weekIndex);
+            iterate(tournament, (roundIndex, weekIndex) -> {
+                Lagoon lagoon = tournament.getLagoon(roundIndex, botId, weekIndex);
                 System.out.print(";");
                 if (lagoon != null) {
                     System.out.print(lagoon.getScoreOf(botId));
@@ -112,9 +111,9 @@ public class Phase1 {
         });
     }
 
-    private static void iterate(StrategyTourneament tourneament, ResultConsumer consumer) {
-        for (int roundIndex = 0; roundIndex < tourneament.getRoundCound(); roundIndex++) {
-            int weekCount = tourneament.getWeekCountAt(roundIndex, 0);
+    private static void iterate(StrategyTournament tournament, ResultConsumer consumer) {
+        for (int roundIndex = 0; roundIndex < tournament.getRoundCound(); roundIndex++) {
+            int weekCount = tournament.getWeekCountAt(roundIndex, 0);
             for (int weekIndex = 0; weekIndex <= weekCount; weekIndex++) {
                 consumer.accept(roundIndex, weekIndex);
             }

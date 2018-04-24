@@ -10,15 +10,15 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class StrategyTourneament {
+public class StrategyTournament {
 
     private Map<BotId, Strategy> strategies = new HashMap<>();
     private List<LagoonRound> rounds = new ArrayList<>();
     private List<LagoonHistory> histories = new ArrayList<>();
 
-    public StrategyTourneament() { }
+    public StrategyTournament() { }
 
-    public StrategyTourneament addStrategy(String name, Strategy strategy) {
+    public StrategyTournament addStrategy(String name, Strategy strategy) {
         if (!histories.isEmpty()) throw new IllegalArgumentException("Rounds already starteds");
 
         BotId botId = new BotId(name);
