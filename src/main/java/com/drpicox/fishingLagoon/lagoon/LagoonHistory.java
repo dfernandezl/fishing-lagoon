@@ -38,7 +38,7 @@ public class LagoonHistory {
     }
 
     public List<BotId> getBots() {
-        return new ArrayList(botWeekActions.values().stream().map(x -> x.botId).collect(Collectors.toSet()));
+        return getInitialLagoon().getBots();
     }
 
     public Lagoon getInitialLagoon() {
