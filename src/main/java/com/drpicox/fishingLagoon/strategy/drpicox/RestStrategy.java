@@ -1,8 +1,9 @@
-package com.drpicox.fishingLagoon.strategy;
+package com.drpicox.fishingLagoon.strategy.drpicox;
 
 import com.drpicox.fishingLagoon.actions.Action;
 import com.drpicox.fishingLagoon.bots.BotId;
 import com.drpicox.fishingLagoon.lagoon.LagoonRound;
+import com.drpicox.fishingLagoon.strategy.Strategy;
 
 import java.util.Random;
 

@@ -4,6 +4,10 @@ import com.drpicox.fishingLagoon.bots.BotId;
 import com.drpicox.fishingLagoon.lagoon.Lagoon;
 import com.drpicox.fishingLagoon.lagoon.LagoonRound;
 import com.drpicox.fishingLagoon.strategy.*;
+import com.drpicox.fishingLagoon.strategy.drpicox.OneStrategy;
+import com.drpicox.fishingLagoon.strategy.drpicox.PercentStrategy;
+import com.drpicox.fishingLagoon.strategy.drpicox.PowerStrategy;
+import com.drpicox.fishingLagoon.strategy.drpicox.RestStrategy;
 
 import java.util.List;
 
