@@ -11,6 +11,12 @@ import java.util.List;
 public class Phase1 {
 
     public static void main(String... args) throws IllegalAccessException, InstantiationException, ClassNotFoundException {
+        tournament1();
+        System.out.println("-----");
+        tournament2();
+    }
+
+    private static void tournament1() {
         StrategyTourneament tourneament = new StrategyTourneament()
                 .addStrategy("rest", new RestStrategy())
                 .addStrategy("one", new OneStrategy())
@@ -26,6 +32,17 @@ public class Phase1 {
         printResults(tourneament);
     }
 
+    private static void tournament2() {
+        StrategyTourneament tourneament = new StrategyTourneament()
+                .addStrategy("one", new OneStrategy())
+                .addStrategy("pct30", new PercentStrategy(0.30));
+
+        tourneament.round(10, 19L);
+        tourneament.round(10, 39L);
+        tourneament.round(new LagoonRound(10).addLagoons(new Lagoon(19L), new Lagoon(39L)));
+
+        printResults(tourneament);
+    }
 
 
     private static void printResults(StrategyTourneament tourneament) {
