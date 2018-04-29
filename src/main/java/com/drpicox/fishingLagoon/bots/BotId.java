@@ -2,7 +2,7 @@ package com.drpicox.fishingLagoon.bots;
 
 import java.util.Objects;
 
-public class BotId {
+public class BotId implements Comparable<BotId> {
 
     private final String value;
 
@@ -21,6 +21,11 @@ public class BotId {
     @Override
     public int hashCode() {
         return Objects.hash(value);
+    }
+
+    @Override
+    public int compareTo(BotId o) {
+        return value.compareTo(o.value);
     }
 
     public BotId(String value) {

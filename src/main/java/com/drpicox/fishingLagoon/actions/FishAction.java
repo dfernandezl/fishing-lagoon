@@ -17,6 +17,11 @@ public class FishAction extends Action {
     }
 
     @Override
+    public long getFishValue() {
+        return getFishingCount();
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -26,7 +31,6 @@ public class FishAction extends Action {
 
     @Override
     public int hashCode() {
-
         return Objects.hash(fishingCount);
     }
 

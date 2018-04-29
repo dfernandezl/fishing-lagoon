@@ -1,0 +1,77 @@
+package com.drpicox.fishingLagoon.engine;
+
+import com.drpicox.fishingLagoon.bots.BotId;
+
+import java.util.*;
+
+public class RoundSeats {
+
+    private Map<BotId, Integer> botSeats = new HashMap<>();
+
+    public RoundSeats() {
+    }
+
+    RoundSeats(RoundSeats sample) {
+        botSeats.putAll(sample.botSeats);
+    }
+
+
+    public int getBotCount() {
+        return botSeats.size();
+    }
+
+    public Set<BotId> getBots() {
+        return new HashSet<>(botSeats.keySet());
+    }
+
+
+    public Set<Integer> getLagoonIndices() {
+        return new HashSet<>(botSeats.values());
+    }
+
+
+    public Set<BotId> getLagoonBots(int lagoonIndex) {
+        Set<BotId> result = new HashSet<>();
+        for (var bot: botSeats.keySet()) {
+            var botSeat = botSeats.get(bot);
+            if (botSeat == lagoonIndex) {
+                result.add(bot);
+            }
+        }
+        return result;
+    }
+
+    public int getBotSeat(BotId botId) {
+        var botSeat = botSeats.get(botId);
+        if (botSeat == null) return -1;
+
+        return botSeat;
+    }
+
+    public int getLagoonCount(double maxDensity) {
+        var botCount = getBotCount();
+        var result = (int)Math.ceil((botCount + 1) / maxDensity);
+        return result;
+    }
+
+
+    int seatBot(BotId botId, int lagoonIndex, int lagoonCount) {
+        var prevBotSeat = getBotSeat(botId);
+        if (prevBotSeat == lagoonIndex) return lagoonIndex;
+
+        if (lagoonIndex >= lagoonCount) return prevBotSeat;
+
+        botSeats.put(botId, lagoonIndex);
+        return prevBotSeat;
+    }
+
+    public Map<String,Map<String, Object>> toMap() {
+        var result = new HashMap<String,Map<String, Object>>();
+        for (var bot: botSeats.keySet()) {
+            var seat = new LinkedHashMap<String, Object>();
+            seat.put("lagoonIndex", botSeats.get(bot));
+            result.put(bot.getValue(), seat);
+        }
+        return result;
+    }
+}
