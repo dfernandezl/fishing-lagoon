@@ -20,7 +20,7 @@ import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
-public class RoundJsonTest {
+public class RoundEngineJsonTest {
 
     private static final FishingLagoonRules rules = new FishingLagoonRules(asList(
             new FishingLagoonSetupRuleFishPopulation()
@@ -29,7 +29,7 @@ public class RoundJsonTest {
             new FishingLagoonRuleProcreation()
     ));
 
-    private Round createRound() {
+    private RoundEngine createRound() {
         return parse(10L,"",
                 "maxDensity=2.0",
                 "weekCount=2",
@@ -115,9 +115,9 @@ public class RoundJsonTest {
         return new BotId("bot" + n);
     }
 
-    private static Round parse(long startTs, String... roundTextLines) {
+    private static RoundEngine parse(long startTs, String... roundTextLines) {
         var roundText = String.join("\n", roundTextLines);
         var roundDescriptor = new RoundParser(new PropsParser()).parse(roundText);
-        return new Round(startTs, roundDescriptor);
+        return new RoundEngine(startTs, roundDescriptor);
     }
 }

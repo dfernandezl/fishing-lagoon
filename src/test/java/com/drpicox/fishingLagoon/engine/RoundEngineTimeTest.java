@@ -1,7 +1,6 @@
 package com.drpicox.fishingLagoon.engine;
 
 
-import com.drpicox.fishingLagoon.bots.BotId;
 import com.drpicox.fishingLagoon.parser.PropsParser;
 import com.drpicox.fishingLagoon.parser.RoundParser;
 import org.junit.Test;
@@ -10,9 +9,9 @@ import static com.drpicox.fishingLagoon.engine.RoundTimeState.*;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
-public class RoundTimeTest {
+public class RoundEngineTimeTest {
 
-    private Round createRound() {
+    private RoundEngine createRound() {
         return parse(10L,"",
                 "seatMilliseconds=20",
                 "commandMilliseconds=30",
@@ -104,9 +103,9 @@ public class RoundTimeTest {
         assertThat(FINISHED.isSeatsReadable(), is(false));
     }
 
-    private static Round parse(long startTs, String... roundTextLines) {
+    private static RoundEngine parse(long startTs, String... roundTextLines) {
         var roundText = String.join("\n", roundTextLines);
         var roundDescriptor = new RoundParser(new PropsParser()).parse(roundText);
-        return new Round(startTs, roundDescriptor);
+        return new RoundEngine(startTs, roundDescriptor);
     }
 }

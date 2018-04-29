@@ -11,9 +11,9 @@ import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
-public class RoundSeatingTest {
+public class RoundEngineSeatingTest {
 
-    private Round createRound(String... extraLines) {
+    private RoundEngine createRound(String... extraLines) {
         return parse("",
                 "maxDensity=2.0",
                 "lagoons=lagoonSmall,lagoonBig",
@@ -111,10 +111,10 @@ public class RoundSeatingTest {
         assertThat(round.getLagoonCount(), is(1));
     }
 
-    private static Round parse(String... roundTextLines) {
+    private static RoundEngine parse(String... roundTextLines) {
         var roundText = String.join("\n", roundTextLines);
         var roundDescriptor = new RoundParser(new PropsParser()).parse(roundText);
-        return new Round(0L, roundDescriptor);
+        return new RoundEngine(0L, roundDescriptor);
     }
 
     private static BotId bot(int n) {

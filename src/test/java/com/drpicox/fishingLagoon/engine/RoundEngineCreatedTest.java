@@ -9,7 +9,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertThat;
 import static org.hamcrest.Matchers.*;
 
-public class RoundCreatedTest {
+public class RoundEngineCreatedTest {
 
     @Test
     public void round_created_gets_description() {
@@ -55,10 +55,10 @@ public class RoundCreatedTest {
         assertThat(roundText1, containsString("lagoon1.fishPopulation=100"));
     }
 
-    private static Round parse(String... roundTextLines) {
+    private static RoundEngine parse(String... roundTextLines) {
         var roundText = String.join("\n", roundTextLines);
         var roundDescriptor = new RoundParser(new PropsParser()).parse(roundText);
-        return new Round(0L, roundDescriptor);
+        return new RoundEngine(0L, roundDescriptor);
     }
 
     private static BotId bot(int id) {

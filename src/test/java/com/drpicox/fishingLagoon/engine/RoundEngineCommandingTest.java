@@ -12,9 +12,9 @@ import static com.drpicox.fishingLagoon.actions.Actions.fish;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
-public class RoundCommandingTest {
+public class RoundEngineCommandingTest {
 
-    private Round createRound(String... extraLines) {
+    private RoundEngine createRound(String... extraLines) {
         return parse("",
                 "maxDensity=2.0",
                 "weekCount=2",
@@ -75,10 +75,10 @@ public class RoundCommandingTest {
         round.commandBot(bot(1), Arrays.asList(fish(1), fish(2), fish(3)));
     }
 
-    private static Round parse(String... roundTextLines) {
+    private static RoundEngine parse(String... roundTextLines) {
         var roundText = String.join("\n", roundTextLines);
         var roundDescriptor = new RoundParser(new PropsParser()).parse(roundText);
-        return new Round(0L, roundDescriptor);
+        return new RoundEngine(0L, roundDescriptor);
     }
 
     private static BotId bot(int n) {

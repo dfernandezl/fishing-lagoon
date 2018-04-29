@@ -11,7 +11,7 @@ import static com.drpicox.fishingLagoon.engine.RoundPhaseState.COMMANDING;
 import static com.drpicox.fishingLagoon.engine.RoundPhaseState.SCORING;
 import static com.drpicox.fishingLagoon.engine.RoundPhaseState.SEATING;
 
-public class Round {
+public class RoundEngine {
     private long startTs;
     private RoundDescriptor roundDescriptor;
 
@@ -22,7 +22,7 @@ public class Round {
 
     private FishingLagoonRules rules;
 
-    public Round(long startTs, RoundDescriptor roundDescriptor) {
+    public RoundEngine(long startTs, RoundDescriptor roundDescriptor) {
         this.startTs = startTs;
         this.roundDescriptor = roundDescriptor;
 

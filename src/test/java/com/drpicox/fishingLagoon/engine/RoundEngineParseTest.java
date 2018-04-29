@@ -8,7 +8,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertThat;
 import static org.hamcrest.Matchers.*;
 
-public class RoundParseTest {
+public class RoundEngineParseTest {
 
     @Test
     public void round_parse_test() {
