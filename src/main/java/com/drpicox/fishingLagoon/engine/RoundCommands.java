@@ -40,7 +40,12 @@ public class RoundCommands {
         return new LagoonWeekCommandsView(seats.getLagoonBots(lagoonIndex), weekIndex, this);
     }
 
-    void commandBot(BotId botId, List<Action> actions) {
+    boolean commandBot(BotId botId, List<Action> actions) {
+        botCommands.put(botId, new ArrayList<>(actions));
+        return true;
+    }
+
+    public void forceCommandBot(BotId botId, List<Action> actions) {
         botCommands.put(botId, new ArrayList<>(actions));
     }
 
