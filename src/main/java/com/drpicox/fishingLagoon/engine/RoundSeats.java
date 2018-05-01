@@ -48,25 +48,30 @@ public class RoundSeats {
         return botSeat;
     }
 
-    public int getLagoonCount(double maxDensity) {
+    public int getLagoonCount(BotId botId, double maxDensity) {
         var botCount = getBotCount();
-        var result = (int)Math.ceil((botCount + 1) / maxDensity);
+        var plusOne = botId == null || botSeats.containsKey(botId) ? 0 : 1;
+        var result = (int)Math.ceil((botCount + plusOne) / maxDensity);
         return result;
     }
 
 
-    int seatBot(BotId botId, int lagoonIndex, int lagoonCount) {
+    boolean seatBot(BotId botId, int lagoonIndex, int lagoonCount) {
         var prevBotSeat = getBotSeat(botId);
-        if (prevBotSeat == lagoonIndex) return lagoonIndex;
+        if (prevBotSeat == lagoonIndex) return false;
 
-        if (lagoonIndex >= lagoonCount) return prevBotSeat;
+        if (lagoonIndex >= lagoonCount) return false;
 
         botSeats.put(botId, lagoonIndex);
-        return prevBotSeat;
+        return true;
     }
 
-    public Map<String,Map<String, Object>> toMap() {
-        var result = new HashMap<String,Map<String, Object>>();
+    public void forceSeatBot(BotId botId, int lagoonIndex) {
+        botSeats.put(botId, lagoonIndex);
+    }
+
+    public Map<String,Object> toMap() {
+        var result = new HashMap<String,Object>();
         for (var bot: botSeats.keySet()) {
             var seat = new LinkedHashMap<String, Object>();
             seat.put("lagoonIndex", botSeats.get(bot));

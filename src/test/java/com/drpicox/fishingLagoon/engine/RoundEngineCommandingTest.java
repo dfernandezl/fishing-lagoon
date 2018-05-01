@@ -40,7 +40,7 @@ public class RoundEngineCommandingTest {
         assertThat(commands.getAction(bot(2), 1), is(fish(4)));
         assertThat(commands.getBotsCount(), is(2));
         assertThat(commands.getBots(), containsInAnyOrder(bot(1), bot(2)));
-        assertThat(round.getLagoonCount(), is(2));
+        assertThat(round.getLagoonCount(), is(1));
     }
 
     @Test

@@ -55,6 +55,21 @@ public class RoundEngineCreatedTest {
         assertThat(roundText1, containsString("lagoon1.fishPopulation=100"));
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void round_created_cannot_have_less_than_density_1() {
+        parse("maxDensity=0.99");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void round_weeks_cannot_be_less_than_1() {
+        parse("weekCount=0");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void round_weeks_cannot_be_more_than_100() {
+        parse("weekCount=101");
+    }
+
     private static RoundEngine parse(String... roundTextLines) {
         var roundText = String.join("\n", roundTextLines);
         var roundDescriptor = new RoundParser(new PropsParser()).parse(roundText);

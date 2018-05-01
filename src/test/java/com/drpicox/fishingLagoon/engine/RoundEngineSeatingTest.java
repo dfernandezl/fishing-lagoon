@@ -21,10 +21,10 @@ public class RoundEngineSeatingTest {
     }
 
     @Test
-    public void round_seating_gives_initially_one_lagoon() {
+    public void round_seating_gives_initially_zero_lagoon() {
         var round = createRound();
 
-        assertThat(round.getLagoonCount(), is(1));
+        assertThat(round.getLagoonCount(), is(0));
     }
 
     @Test
@@ -51,7 +51,7 @@ public class RoundEngineSeatingTest {
         assertThat(seats.getBotSeat(bot(1)), is(-1));
         assertThat(seats.getBotCount(), is(0));
         assertThat(seats.getBots(), is(empty()));
-        assertThat(round.getLagoonCount(), is(1));
+        assertThat(round.getLagoonCount(), is(0));
     }
 
     @Test
@@ -66,7 +66,7 @@ public class RoundEngineSeatingTest {
         assertThat(seats.getBotSeat(bot(2)), is(0));
         assertThat(seats.getBotCount(), is(2));
         assertThat(seats.getBots(), containsInAnyOrder(bot(1), bot(2)));
-        assertThat(round.getLagoonCount(), is(2));
+        assertThat(round.getLagoonCount(), is(1));
     }
 
     @Test
@@ -75,13 +75,14 @@ public class RoundEngineSeatingTest {
 
         round.seatBot(bot(1), 0);
         round.seatBot(bot(2), 0);
+        round.seatBot(bot(3), 0);
         round.seatBot(bot(2), 1);
 
         var seats = round.getSeats();
         assertThat(seats.getBotSeat(bot(1)), is(0));
         assertThat(seats.getBotSeat(bot(2)), is(1));
-        assertThat(seats.getBotCount(), is(2));
-        assertThat(seats.getBots(), containsInAnyOrder(bot(1), bot(2)));
+        assertThat(seats.getBotCount(), is(3));
+        assertThat(seats.getBots(), containsInAnyOrder(bot(1), bot(2), bot(3)));
         assertThat(round.getLagoonCount(), is(2));
     }
 

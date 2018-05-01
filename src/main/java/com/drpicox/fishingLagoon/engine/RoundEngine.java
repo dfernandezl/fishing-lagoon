@@ -2,6 +2,7 @@ package com.drpicox.fishingLagoon.engine;
 
 import com.drpicox.fishingLagoon.actions.Action;
 import com.drpicox.fishingLagoon.bots.BotId;
+import com.drpicox.fishingLagoon.common.TimeStamp;
 import com.drpicox.fishingLagoon.parser.RoundDescriptor;
 import com.drpicox.fishingLagoon.rules.FishingLagoonRules;
 
@@ -21,6 +22,10 @@ public class RoundEngine {
     private RoundScores scores;
 
     private FishingLagoonRules rules;
+
+    public RoundEngine(TimeStamp startTs, RoundDescriptor roundDescriptor) {
+        this(startTs.getMilliseconds(), roundDescriptor);
+    }
 
     public RoundEngine(long startTs, RoundDescriptor roundDescriptor) {
         this.startTs = startTs;
@@ -48,18 +53,20 @@ public class RoundEngine {
         return RoundTimeState.get(ts - startTs, roundDescriptor);
     }
 
-    // round seats
-
-    public void seatBot(BotId botId, int lagoonIndex) {
-        phaseState.verifySeat();
-        if (seats == null) seats = new RoundSeats();
-
-        seats.seatBot(botId, lagoonIndex, getLagoonCount());
+    public RoundTimeState getTimeState(TimeStamp ts) {
+        return getTimeState(ts.getMilliseconds());
     }
 
-    public int getBotCount() {
-        if (seats == null) return 0;
-        return seats.getBotCount();
+    // round seats
+
+    public boolean seatBot(BotId botId, int lagoonIndex) {
+        phaseState.verifySeat();
+
+        return seats.seatBot(botId, lagoonIndex, getLagoonCount(botId));
+    }
+
+    public void forceSeatBot(BotId botId, int lagoonIndex) {
+        seats.forceSeatBot(botId, lagoonIndex);
     }
 
     public RoundSeats getSeats() {
@@ -70,24 +77,34 @@ public class RoundEngine {
     // lagoon count
 
     public int getLagoonCount() {
-        if (seats == null) return 1;
+        return getLagoonCount(null);
+    }
 
+    public int getLagoonCount(BotId botId) {
         var maxDensity = roundDescriptor.getMaxDensity();
-        var lagoonCount = seats.getLagoonCount(maxDensity);
+        var lagoonCount = seats.getLagoonCount(botId, maxDensity);
         return lagoonCount;
     }
 
     // round commands
 
-    public void commandBot(BotId botId, List<Action> actions) {
+    public boolean commandBot(BotId botId, List<Action> actions) {
         if (actions.size() != getWeekCount()) throw new IllegalArgumentException("Actions length must match weekCount");
         phaseState.verifyCommand();
         phaseState = COMMANDING;
 
         var lagoonIndex = seats.getBotSeat(botId);
-        if (lagoonIndex == -1) return;
+        if (lagoonIndex == -1) return false;
 
-        commands.commandBot(botId, actions);
+        return commands.commandBot(botId, actions);
+    }
+
+    int getWeekCount() {
+        return roundDescriptor.getWeekCount();
+    }
+
+    public void forceCommandBot(BotId botId, List<Action> actions) {
+        commands.forceCommandBot(botId, actions);
     }
 
     public RoundCommands getCommands() {
@@ -114,8 +131,4 @@ public class RoundEngine {
     }
 
     // weeks
-
-    int getWeekCount() {
-        return roundDescriptor.getWeekCount();
-    }
 }

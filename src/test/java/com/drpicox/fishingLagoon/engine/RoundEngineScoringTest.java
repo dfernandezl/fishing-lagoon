@@ -37,6 +37,7 @@ public class RoundEngineScoringTest {
     @Test
     public void round_scoring_computes_lagoon_fish_population() {
         var round = createRound();
+        round.seatBot(bot(1), 0);
 
         var scores = round.getScores(rules);
         assertThat(scores.getLagoonCount(), is(1));
@@ -52,6 +53,7 @@ public class RoundEngineScoringTest {
 
         round.seatBot(bot(1), 0);
         round.seatBot(bot(2), 0);
+        round.seatBot(bot(3), 0);
 
         var scores = round.getScores(rules);
         assertThat(scores.getLagoonCount(), is(2));
@@ -68,9 +70,9 @@ public class RoundEngineScoringTest {
 
         round.seatBot(bot(1), 0);
         round.seatBot(bot(2), 0);
-        round.seatBot(bot(2), 1);
+        round.seatBot(bot(3), 1);
         round.commandBot(bot(1), asList(fish(1L), fish(2L)));
-        round.commandBot(bot(2), asList(fish(200L), fish(200L)));
+        round.commandBot(bot(3), asList(fish(200L), fish(200L)));
 
         var scores = round.getScores(rules);
         assertThat(scores.getFishPopulation(0), is(6L));

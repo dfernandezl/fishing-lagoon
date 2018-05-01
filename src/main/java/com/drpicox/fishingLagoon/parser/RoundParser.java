@@ -10,8 +10,8 @@ public class RoundParser {
         this.propsParser = propsParser;
     }
 
-    public RoundDescriptor parse(String tournamentText) {
-        Props props = propsParser.parse(tournamentText);
+    public RoundDescriptor parse(String roundText) {
+        Props props = propsParser.parse(roundText);
         State state = new State(props);
 
         return state.getRound();
@@ -34,7 +34,9 @@ public class RoundParser {
             Long commandMilliseconds = props.getLong("commandMilliseconds", 20000L);
             Long scoreMilliseconds = props.getLong("scoreMilliseconds", 20000L);
 
-            if (maxDensity == null || lagoonNames == null || weekCount == null) return null;
+            if (maxDensity < 1.0) throw new IllegalArgumentException("maxDensity cannot be below 1.0");
+            if (weekCount < 1) throw new IllegalArgumentException("weekCount cannot be below 1");
+            if (weekCount > 100) throw new IllegalArgumentException("weekCount cannot be above 100");
 
             List<LagoonDescriptor> lagoonDescriptors = getLagoonDescriptors(lagoonNames);
             return new RoundDescriptor(seatMilliseconds, commandMilliseconds, scoreMilliseconds, maxDensity, lagoonDescriptors, weekCount);

@@ -11,7 +11,7 @@ public class FishingLagoonSetupRuleFishPopulation implements FishingLagoonSetupR
     @Override
     public void setup(RoundScoresCalculator scores, RoundDescriptor descriptor, RoundSeats seats, RoundCommands commands) {
         var maxDensity = descriptor.getMaxDensity();
-        var lagoonCount = seats.getLagoonCount(maxDensity);
+        var lagoonCount = seats.getLagoonCount(null, maxDensity);
 
         for (int lagoonIndex = 0; lagoonIndex < lagoonCount; lagoonIndex++) {
             var lagoonDescriptor = descriptor.getLagoonDescriptor(lagoonIndex);

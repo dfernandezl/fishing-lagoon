@@ -40,6 +40,10 @@ public class RoundDescriptor {
         return scoreMilliseconds;
     }
 
+    public long getTotalMilliseconds() {
+        return seatMilliseconds + commandMilliseconds + scoreMilliseconds;
+    }
+
     public int getWeekCount() {
         return weekCount;
     }
