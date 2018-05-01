@@ -29,11 +29,16 @@ public class RestController {
     }
 
     public void start() {
+        // http://sparkjava.com/tutorials/heroku
+        port(getHerokuAssignedPort());
+
         get("/hello", (rq, rs) -> {
            var m = new HashMap();
            m.put("hello", "orld");
            return m;
         }, gson::toJson);
+
+        get("/", (a,b) -> "Hello");
 
         get("/bots", this::listBots, gson::toJson);
         post("/bots", this::createBot, gson::toJson);
@@ -49,6 +54,14 @@ public class RestController {
         exception(IllegalArgumentException.class, this::handle);
         exception(IllegalStateException.class, this::handle);
         exception(SQLException.class, this::handle);
+    }
+
+    static int getHerokuAssignedPort() {
+        ProcessBuilder processBuilder = new ProcessBuilder();
+        if (processBuilder.environment().get("PORT") != null) {
+            return Integer.parseInt(processBuilder.environment().get("PORT"));
+        }
+        return 4567; //return default port if heroku-port isn't set (i.e. on localhost)
     }
 
     private <T extends Throwable> void handle(T error, Request request, Response response) {
