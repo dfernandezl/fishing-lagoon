@@ -85,7 +85,8 @@ public class RestController {
 
     private Object getRound(Request request, Response response) throws SQLException {
         var roundId = new RoundId(request.params("roundId"));
-        return gameController.getRound(roundId, now());
+        var botToken = new BotToken(request.params("botToken"));
+        return gameController.getRound(roundId, botToken, now());
     }
 
     private Object listRounds(Request request, Response response) throws SQLException {

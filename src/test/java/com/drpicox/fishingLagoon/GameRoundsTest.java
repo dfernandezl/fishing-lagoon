@@ -56,14 +56,15 @@ public class GameRoundsTest {
         gameController.createBot(botToken("token1"), adminToken);
         gameController.createBot(botToken("token2"), adminToken);
         gameController.createBot(botToken("token3"), adminToken);
+        gameController.createBot(botToken("token4"), adminToken);
     }
 
     // ROUND CREATION
 
     @Test
     public void rounds_create() throws SQLException {
-        var round1 = gameController.createRound(ROUND_TEXT, botToken("token1"), ts(0L));
-        var round2 = gameController.createRound(ROUND_TEXT, botToken("token2"), ts(TOTAL_MILLISECONDS));
+        var round1 = gameController.createRound(ROUND_TEXT, botToken("token1"), ts(0L)).withSelfId(null);
+        var round2 = gameController.createRound(ROUND_TEXT, botToken("token2"), ts(TOTAL_MILLISECONDS)).withSelfId(null);
         var rounds = gameController.listRounds();
 
         assertThat(round1, hasProperty("id", is(round(1))));
@@ -79,7 +80,7 @@ public class GameRoundsTest {
 
     @Test
     public void rounds_create_cannot_be_called_by_unexisting_bots() throws SQLException {
-        var round1 = gameController.createRound(ROUND_TEXT, botToken("token1"), ts(0L));
+        var round1 = gameController.createRound(ROUND_TEXT, botToken("token1"), ts(0L)).withSelfId(null);
         var round2 = gameController.createRound(ROUND_TEXT, botToken("unexistingToken"), ts(TOTAL_MILLISECONDS));
 
         var rounds = gameController.listRounds();
@@ -119,7 +120,7 @@ public class GameRoundsTest {
 
         var rounds = gameController.listRounds();
         assertThat(rounds, hasSize(1));
-        assertThat(rounds, hasItem(samePropertyValuesAs(round1)));
+        assertThat(rounds, hasItem(samePropertyValuesAs(round1.withSelfId(null))));
         assertThat(exceptionFound, is(not(nullValue())));
     }
 
@@ -133,7 +134,7 @@ public class GameRoundsTest {
         var roundTs2 = gameController.seatBot(round.getId(), botToken("token2"), 0, ts(2L));
         var roundTs3 = gameController.seatBot(round.getId(), botToken("token3"), 1, ts(3L));
 
-        var roundTs4 = gameController.getRound(round.getId(), ts(4L));
+        var roundTs4 = gameController.getRound(round.getId(), botToken("token3"), ts(4L));
         var seatsTs4 = roundTs4.getSeats();
         assertThat(seatsTs4, (Matcher) hasEntry(is("bot1"), hasEntry("lagoonIndex", 0)));
         assertThat(seatsTs4, (Matcher) hasEntry(is("bot2"), hasEntry("lagoonIndex", 0)));
@@ -392,6 +393,21 @@ public class GameRoundsTest {
         assertThat(scores.get("lagoons"), (Matcher) contains(hasEntry("fishPopulation", 15L)));
         assertThat(scores.get("bots"), (Matcher) aMapWithSize(1));
         assertThat(scores.get("bots"), (Matcher) hasEntry(is("bot1"), hasEntry("score", 3L)));
+    }
+
+    @Test
+    public void round_creating_seating_commanding_and_getting_returns_selfId() throws SQLException {
+        var create = gameController.createRound(ROUND_TEXT, botToken("token1"), ts(0L));
+        var roundId = create.getId();
+
+        var seat = gameController.seatBot(roundId, botToken("token2"), 0, ts(1L));
+        var command = gameController.commandBot(roundId, botToken("token3"), asList(fish(1), fish(2)), ts(SEAT_MILLISECONDS + 0L));
+        var get = gameController.getRound(roundId, botToken("token4"), ts(SEAT_MILLISECONDS + COMMAND_MILLISECONDS + SCORE_MILLISECONDS));
+
+        assertThat(create.getSelfId(), is(bot(1)));
+        assertThat(seat.getSelfId(), is(bot(2)));
+        assertThat(command.getSelfId(), is(bot(3)));
+        assertThat(get.getSelfId(), is(bot(4)));
     }
 
 

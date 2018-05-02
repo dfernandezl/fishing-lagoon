@@ -1,5 +1,6 @@
 package com.drpicox.fishingLagoon.rounds;
 
+import com.drpicox.fishingLagoon.bots.BotId;
 import com.drpicox.fishingLagoon.common.TimeOffset;
 import com.drpicox.fishingLagoon.common.TimeStamp;
 import com.drpicox.fishingLagoon.engine.RoundCommands;
@@ -19,6 +20,7 @@ public class Round {
     private TimeStamp startTs;
     private TimeStamp endTs;
     private String state;
+    private BotId selfId;
     private Map<String,Object> descriptor;
     private Map<String,Object> seats;
     private Map<String,Object> commands;
@@ -29,7 +31,8 @@ public class Round {
         result.put("id", id.getValue());
         result.put("startTs", startTs.getMilliseconds());
         result.put("endTs", endTs.getMilliseconds());
-        if (state != null) result.put("state", descriptor);
+        if (selfId != null) result.put("selfId", selfId.getValue());
+        if (state != null) result.put("state", state);
         if (descriptor != null) result.put("descriptor", descriptor);
         if (seats != null) result.put("seats", seats);
         if (commands != null) result.put("commands", commands);
@@ -71,6 +74,14 @@ public class Round {
         return endTs;
     }
 
+    public String getState() {
+        return state;
+    }
+
+    public BotId getSelfId() {
+        return selfId;
+    }
+
     public Map<String,Object> getDescriptor() {
         return descriptor;
     }
@@ -106,4 +117,10 @@ public class Round {
             scores = roundEngine.getScores(rules).toMap();
         }
     }
+
+    public Round withSelfId(BotId id) {
+        this.selfId = id;
+        return this;
+    }
+
 }

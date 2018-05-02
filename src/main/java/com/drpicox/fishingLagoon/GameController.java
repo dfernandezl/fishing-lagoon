@@ -57,11 +57,21 @@ public class GameController {
 
         var roundDescriptor = roundParser.parse(roundText);
 
-        return roundsController.create(roundDescriptor, ts);
+        return roundsController.create(roundDescriptor, ts).withSelfId(bot.getId());
     }
 
-    public synchronized Round getRound(RoundId id, TimeStamp ts) throws SQLException {
-        return roundsController.getRound(id, ts);
+    public Round getRound(RoundId id, TimeStamp ts) throws SQLException {
+        return getRound(id, null, ts);
+    }
+    public synchronized Round getRound(RoundId id, BotToken token, TimeStamp ts) throws SQLException {
+        var round = roundsController.getRound(id, ts);
+
+        if (token != null) {
+            Bot bot = botsController.getBotByToken(token);
+            if (bot != null) round.withSelfId(bot.getId());
+        }
+
+        return round;
     }
 
     public synchronized List<Round> listRounds() throws SQLException {
@@ -72,13 +82,13 @@ public class GameController {
         Bot bot = botsController.getBotByToken(botToken);
         if (bot == null) return null;
 
-        return roundsController.seatBot(roundId, bot.getId(), lagoonIndex, ts);
+        return roundsController.seatBot(roundId, bot.getId(), lagoonIndex, ts).withSelfId(bot.getId());
     }
 
     public synchronized Round commandBot(RoundId roundId, BotToken botToken, List<Action> actions, TimeStamp ts) throws SQLException {
         Bot bot = botsController.getBotByToken(botToken);
         if (bot == null) return null;
 
-        return roundsController.commandBot(roundId, bot.getId(), actions, ts);
+        return roundsController.commandBot(roundId, bot.getId(), actions, ts).withSelfId(bot.getId());
     }
 }
