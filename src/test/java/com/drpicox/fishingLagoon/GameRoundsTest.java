@@ -134,7 +134,7 @@ public class GameRoundsTest {
         var roundTs2 = gameController.seatBot(round.getId(), botToken("token2"), 0, ts(2L));
         var roundTs3 = gameController.seatBot(round.getId(), botToken("token3"), 1, ts(3L));
 
-        var roundTs4 = gameController.getRound(round.getId(), botToken("token3"), ts(4L));
+        var roundTs4 = gameController.getRound(round.getId(), botToken("token3"), ts(3L));
         var seatsTs4 = roundTs4.getSeats();
         assertThat(seatsTs4, (Matcher) hasEntry(is("bot1"), hasEntry("lagoonIndex", 0)));
         assertThat(seatsTs4, (Matcher) hasEntry(is("bot2"), hasEntry("lagoonIndex", 0)));

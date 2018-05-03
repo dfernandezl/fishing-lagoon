@@ -19,6 +19,7 @@ public class Round {
     private RoundId id;
     private TimeStamp startTs;
     private TimeStamp endTs;
+    private TimeStamp nowTs;
     private String state;
     private BotId selfId;
     private Map<String,Object> descriptor;
@@ -31,6 +32,7 @@ public class Round {
         result.put("id", id.getValue());
         result.put("startTs", startTs.getMilliseconds());
         result.put("endTs", endTs.getMilliseconds());
+        if (nowTs != null) result.put("nowTs", nowTs.getMilliseconds());
         if (selfId != null) result.put("selfId", selfId.getValue());
         if (state != null) result.put("state", state);
         if (descriptor != null) result.put("descriptor", descriptor);
@@ -74,6 +76,10 @@ public class Round {
         return endTs;
     }
 
+    public TimeStamp getNowTs() {
+        return nowTs;
+    }
+
     public String getState() {
         return state;
     }
@@ -98,6 +104,7 @@ public class Round {
     public void apply(RoundEngine roundEngine, FishingLagoonRules rules, TimeStamp ts) {
         var timeState = roundEngine.getTimeState(ts);
 
+        nowTs = ts;
         state = timeState.toString();
         descriptor = null;
         seats = null;
