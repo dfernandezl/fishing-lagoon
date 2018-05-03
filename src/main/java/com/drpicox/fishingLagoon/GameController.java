@@ -30,7 +30,7 @@ public class GameController {
     }
 
     public synchronized Bot createBot(BotToken botToken, AdminToken adminToken) throws SQLException {
-        if (!this.adminToken.validate(adminToken)) return null;
+        if (!this.adminToken.validate(adminToken)) throw new IllegalArgumentException("Invalid adminToken");
 
         return botsController.create(botToken);
     }
@@ -53,7 +53,7 @@ public class GameController {
 
     public synchronized Round createRound(String roundText, BotToken token, TimeStamp ts) throws SQLException {
         Bot bot = botsController.getBotByToken(token);
-        if (bot == null) return null;
+        if (bot == null) throw new IllegalArgumentException("Invalid botToken");
 
         var roundDescriptor = roundParser.parse(roundText);
 
@@ -80,14 +80,14 @@ public class GameController {
 
     public synchronized Round seatBot(RoundId roundId, BotToken botToken, int lagoonIndex, TimeStamp ts) throws SQLException {
         Bot bot = botsController.getBotByToken(botToken);
-        if (bot == null) return null;
+        if (bot == null) throw new IllegalArgumentException("Invalid botToken");
 
         return roundsController.seatBot(roundId, bot.getId(), lagoonIndex, ts).withSelfId(bot.getId());
     }
 
     public synchronized Round commandBot(RoundId roundId, BotToken botToken, List<Action> actions, TimeStamp ts) throws SQLException {
         Bot bot = botsController.getBotByToken(botToken);
-        if (bot == null) return null;
+        if (bot == null) throw new IllegalArgumentException("Invalid botToken");
 
         return roundsController.commandBot(roundId, bot.getId(), actions, ts).withSelfId(bot.getId());
     }

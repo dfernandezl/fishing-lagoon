@@ -40,15 +40,9 @@ public class GameBotsTest {
         assertThat(bots, hasItem(samePropertyValuesAs(bot2)));
     }
 
-    @Test
-    public void bots_create_does_nothing_if_admin_token_does_not_match() throws SQLException {
-        var bot1 = gameController.createBot(botToken("token1"), adminToken);
-        var bot2 = gameController.createBot(botToken("token2"), new AdminToken("wrongToken"));
-
-        var bots = gameController.listBots();
-        assertThat(bot2, is(nullValue()));
-        assertThat(bots, hasSize(1));
-        assertThat(bots, hasItem(samePropertyValuesAs(bot1)));
+    @Test(expected = IllegalArgumentException.class)
+    public void bots_create_fails_if_admin_token_does_not_match() throws SQLException {
+        gameController.createBot(botToken("token1"), new AdminToken("wrongToken"));
     }
 
     @Test

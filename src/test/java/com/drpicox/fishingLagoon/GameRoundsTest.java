@@ -78,16 +78,9 @@ public class GameRoundsTest {
         assertThat(rounds, hasItem(samePropertyValuesAs(round2)));
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void rounds_create_cannot_be_called_by_unexisting_bots() throws SQLException {
-        var round1 = gameController.createRound(ROUND_TEXT, botToken("token1"), ts(0L)).withSelfId(null);
-        var round2 = gameController.createRound(ROUND_TEXT, botToken("unexistingToken"), ts(TOTAL_MILLISECONDS));
-
-        var rounds = gameController.listRounds();
-
-        assertThat(round2, is(nullValue()));
-        assertThat(rounds, hasSize(1));
-        assertThat(rounds, hasItem(samePropertyValuesAs(round1)));
+        gameController.createRound(ROUND_TEXT, botToken("unexistingToken"), ts(TOTAL_MILLISECONDS));
     }
 
     @Test
@@ -158,28 +151,22 @@ public class GameRoundsTest {
         assertThat(seats, (Matcher) hasEntry(is("bot2"), hasEntry("lagoonIndex", 1)));
     }
 
-    @Test
-    public void round_seating_ignores_illegal_seats() throws SQLException {
+    @Test(expected = IllegalArgumentException.class)
+    public void round_seating_reports_illegal_seats_negative() throws SQLException {
         var roundId = gameController.createRound(ROUND_TEXT, botToken("token1"), ts(0L)).getId();
-
-        gameController.seatBot(roundId, botToken("token1"), 0, ts(1L));
         gameController.seatBot(roundId, botToken("token2"), -1, ts(2L));
-        gameController.seatBot(roundId, botToken("token3"), 1, ts(3L));
-
-        var seats = gameController.getRound(roundId, ts(4L)).getSeats();
-        assertThat(seats, (Matcher) aMapWithSize(1));
-        assertThat(seats, (Matcher) hasEntry(is("bot1"), hasEntry("lagoonIndex", 0)));
     }
 
-    @Test
-    public void round_seating_ignores_seats_outside_time() throws SQLException {
+    @Test(expected = IllegalArgumentException.class)
+    public void round_seating_reports_illegal_seats_not_existing() throws SQLException {
+        var roundId = gameController.createRound(ROUND_TEXT, botToken("token1"), ts(0L)).getId();
+        gameController.seatBot(roundId, botToken("token2"), -1, ts(2L));
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void round_seating_fails_seats_outside_time() throws SQLException {
         var roundId = gameController.createRound(ROUND_TEXT, botToken("token1"), ts(10L)).getId();
-
-        gameController.seatBot(roundId, botToken("token1"), 0, ts(0L));
         gameController.seatBot(roundId, botToken("token2"), 0, ts(SEAT_MILLISECONDS + 10L));
-
-        var seats = gameController.getRound(roundId, ts(10L)).getSeats();
-        assertThat(seats, (Matcher) aMapWithSize(0));
     }
 
     @Test
@@ -228,20 +215,10 @@ public class GameRoundsTest {
         assertThat(commands, (Matcher) hasEntry(is("bot1"), hasEntry(is("actions"), contains("fish 3", "fish 4"))));
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void round_commanding_not_accept_not_seated_bots() throws SQLException {
         var roundId = gameController.createRound(ROUND_TEXT, botToken("token1"), ts(0L)).getId();
-        gameController.seatBot(roundId, botToken("token1"), 0, ts(1L));
-        gameController.seatBot(roundId, botToken("token2"), 0, ts(SEAT_MILLISECONDS));
-
         gameController.commandBot(roundId, botToken("token1"), asList(fish(1), fish(2)), ts(SEAT_MILLISECONDS + 0L));
-        gameController.commandBot(roundId, botToken("token2"), asList(fish(3), fish(4)), ts(SEAT_MILLISECONDS + 1L));
-
-        var round = gameController.getRound(roundId, ts(SEAT_MILLISECONDS + COMMAND_MILLISECONDS ));
-        var commands = round.getCommands();
-
-        assertThat(commands, (Matcher) aMapWithSize(1));
-        assertThat(commands, (Matcher) hasEntry(is("bot1"), hasEntry(is("actions"), contains("fish 1", "fish 2"))));
     }
 
     @Test
@@ -266,36 +243,18 @@ public class GameRoundsTest {
         assertThat(commands, (Matcher) hasEntry(is("bot1"), hasEntry(is("actions"), contains("fish 1", "fish 2"))));
     }
 
-    @Test
+    @Test(expected = IllegalStateException.class)
     public void round_commanding_not_accept_before_time() throws SQLException {
         var roundId = gameController.createRound(ROUND_TEXT, botToken("token1"), ts(0L)).getId();
         gameController.seatBot(roundId, botToken("token1"), 0, ts(1L));
-        gameController.seatBot(roundId, botToken("token2"), 0, ts(2L));
-
-        gameController.commandBot(roundId, botToken("token1"), asList(fish(1), fish(2)), ts(SEAT_MILLISECONDS + 0L));
-        gameController.commandBot(roundId, botToken("token2"), asList(fish(3), fish(4)), ts(SEAT_MILLISECONDS - 1L));
-
-        var round = gameController.getRound(roundId, ts(SEAT_MILLISECONDS + COMMAND_MILLISECONDS ));
-        var commands = round.getCommands();
-
-        assertThat(commands, (Matcher) aMapWithSize(1));
-        assertThat(commands, (Matcher) hasEntry(is("bot1"), hasEntry(is("actions"), contains("fish 1", "fish 2"))));
+        gameController.commandBot(roundId, botToken("token1"), asList(fish(3), fish(4)), ts(SEAT_MILLISECONDS - 1L));
     }
 
-    @Test
+    @Test(expected = IllegalStateException.class)
     public void round_commanding_not_accept_after_time() throws SQLException {
         var roundId = gameController.createRound(ROUND_TEXT, botToken("token1"), ts(0L)).getId();
         gameController.seatBot(roundId, botToken("token1"), 0, ts(1L));
-        gameController.seatBot(roundId, botToken("token2"), 0, ts(2L));
-
-        gameController.commandBot(roundId, botToken("token1"), asList(fish(1), fish(2)), ts(SEAT_MILLISECONDS + 0L));
-        gameController.commandBot(roundId, botToken("token2"), asList(fish(3), fish(4)), ts(SEAT_MILLISECONDS + COMMAND_MILLISECONDS));
-
-        var round = gameController.getRound(roundId, ts(SEAT_MILLISECONDS + COMMAND_MILLISECONDS ));
-        var commands = round.getCommands();
-
-        assertThat(commands, (Matcher) aMapWithSize(1));
-        assertThat(commands, (Matcher) hasEntry(is("bot1"), hasEntry(is("actions"), contains("fish 1", "fish 2"))));
+        gameController.commandBot(roundId, botToken("token1"), asList(fish(3), fish(4)), ts(SEAT_MILLISECONDS + COMMAND_MILLISECONDS));
     }
 
     @Test
@@ -401,6 +360,8 @@ public class GameRoundsTest {
         var roundId = create.getId();
 
         var seat = gameController.seatBot(roundId, botToken("token2"), 0, ts(1L));
+        gameController.seatBot(roundId, botToken("token3"), 0, ts(1L));
+
         var command = gameController.commandBot(roundId, botToken("token3"), asList(fish(1), fish(2)), ts(SEAT_MILLISECONDS + 0L));
         var get = gameController.getRound(roundId, botToken("token4"), ts(SEAT_MILLISECONDS + COMMAND_MILLISECONDS + SCORE_MILLISECONDS));
 

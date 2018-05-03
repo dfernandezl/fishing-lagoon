@@ -83,29 +83,33 @@ public class RoundsController {
 
     public Round seatBot(RoundId id, BotId botId, int lagoonIndex, TimeStamp ts) throws SQLException {
         var round = roundsStore.get(id);
-        if (!round.isActive(ts)) return round;
+        if (!round.isActive(ts)) throw new IllegalStateException("Round is not active");
 
         var engine = getRoundEngine(round);
         if (engine.getTimeState(ts).isAcceptingSeats()) {
             if (engine.seatBot(botId, lagoonIndex)) {
                 roundsSeatsStore.save(round.getId(), botId, lagoonIndex);
+                return getRound(id, ts);
             }
+            throw new IllegalArgumentException("Cannot seat at lagoon:" + lagoonIndex);
         }
 
-        return getRound(id, ts);
+        throw new IllegalStateException("It is not time for seating");
     }
 
     public Round commandBot(RoundId id, BotId botId, List<Action> actions, TimeStamp ts) throws SQLException {
         var round = roundsStore.get(id);
-        if (!round.isActive(ts)) return round;
+        if (!round.isActive(ts)) throw new IllegalStateException("Round is not active");
 
         var engine = getRoundEngine(round);
         if (engine.getTimeState(ts).isAcceptingCommands()) {
             if (engine.commandBot(botId, actions)) {
                 roundsCommandsStore.save(round.getId(), botId, actions);
+                return getRound(id, ts);
             }
+            throw new IllegalArgumentException("Cannot command bot");
         }
 
-        return getRound(id, ts);
+        throw new IllegalStateException("It is not time for commanding");
     }
 }
